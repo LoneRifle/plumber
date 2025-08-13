@@ -74,7 +74,7 @@ describe('http request interceptors', () => {
 
   it('should allow not recursive URL', async () => {
     $.step.parameters.method = 'GET'
-    $.step.parameters.url = 'https://mock.codes/200'
+    $.step.parameters.url = 'https://example.com'
     await expect(makeRequestAction.run($)).resolves.toBeUndefined()
   })
 

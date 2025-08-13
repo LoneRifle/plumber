@@ -5,7 +5,7 @@ import { getIpFromUrl, isIpAllowed } from '../../common/ip-resolver'
 describe('IP resolvers', () => {
   describe('Get IP Async', () => {
     it('should be able to get ip address from urls with path', async () => {
-      const ip = await getIpFromUrl('https://mock.codes/200')
+      const ip = await getIpFromUrl('https://example.com')
       expect(ip).toBeDefined()
     })
 
