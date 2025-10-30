@@ -13,6 +13,7 @@ import deleteStep from './mutations/delete-step'
 import deleteUploadedFile from './mutations/delete-uploaded-file'
 import duplicateBranch from './mutations/duplicate-branch'
 import duplicateFlow from './mutations/duplicate-flow'
+import dynamicAction from './mutations/dynamic-action'
 import executeStep from './mutations/execute-step'
 import generateAuthUrl from './mutations/generate-auth-url'
 import generatePresignedPost from './mutations/generate-presigned-post'
@@ -81,6 +82,7 @@ export default {
   verifyOtp,
   retryExecutionStep,
   retryPartialStep,
+  dynamicAction,
   logout,
   loginWithSgid,
   loginWithSelectedSgid,
