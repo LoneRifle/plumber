@@ -1,7 +1,7 @@
 import { IFlow } from '@plumber/types'
 
 import { ElementType, ReactNode, useContext, useMemo, useState } from 'react'
-import { BiMailSend, BiTransfer, BiUserPlus } from 'react-icons/bi'
+import { BiLink, BiMailSend, BiTransfer, BiUserPlus } from 'react-icons/bi'
 import { useParams } from 'react-router-dom'
 import { ApolloError, useQuery } from '@apollo/client'
 import {
@@ -78,6 +78,17 @@ export default function EditorSettingsLayout(
               group: 'Manage Access' as const,
             },
           ].filter(Boolean),
+        },
+        showCollaborators && {
+          group: 'Manage Pipe',
+          links: [
+            {
+              Icon: BiLink,
+              text: 'Connections',
+              to: URLS.FLOW_EDITOR_CONNECTIONS(flowId),
+              group: 'Manage Pipe' as const,
+            },
+          ],
         },
         {
           group: 'Notifications',
