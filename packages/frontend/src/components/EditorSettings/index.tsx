@@ -101,7 +101,7 @@ export default function EditorSettingsLayout(
             },
           ],
         },
-      ],
+      ].filter(Boolean),
       () => setDrawerOpen(true),
       () => setDrawerOpen(false),
     ],
