@@ -84,9 +84,10 @@ const TableRow = (props: TableRowProps) => {
           <AppIcon
             name={appName}
             url={appIconUrl}
-            size="xs"
             opacity={isInUse ? 1 : 0.5}
             filter={isInUse ? undefined : 'grayscale(100%)'}
+            height="20px"
+            width="20px"
           />
           <Box display={{ base: 'none', md: 'block' }}>{appName}</Box>
         </Flex>
