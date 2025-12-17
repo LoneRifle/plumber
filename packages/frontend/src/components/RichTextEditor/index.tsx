@@ -1,9 +1,9 @@
 import './RichTextEditor.scss'
 
-import type { TRteMenuOption } from '@plumber/types'
-import { TDataOutMetadatumType } from '@plumber/types'
+import type { TDataOutMetadatumType, TRteMenuOption } from '@plumber/types'
+import { IJSONValue } from '@plumber/types'
 
-import { useCallback, useContext, useEffect, useMemo } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
   Box,
@@ -91,6 +91,7 @@ const RICH_TEXT_EXTENSIONS = [
 interface EditorProps {
   onChange: (...event: any[]) => void
   initialValue: string
+  defaultValue?: string | IJSONValue
   editable: boolean
   placeholder?: string
   variablesEnabled?: boolean
@@ -106,6 +107,7 @@ interface EditorProps {
 const Editor = ({
   onChange,
   initialValue,
+  defaultValue,
   editable,
   placeholder,
   variablesEnabled,
@@ -122,6 +124,10 @@ const Editor = ({
   const { allApps } = useContext(EditorContext)
   const isMobile = useIsMobile()
   const isMulticol = parentType === 'multicol'
+
+  // ref to track the defaultValue
+  // this is to sync the content of the editor with the defaultValue
+  const previousDefaultValueRef = useRef(defaultValue)
 
   const [stepsWithVariables, varInfo] = useMemo(() => {
     const stepsWithVars = filterVariables(
@@ -219,6 +225,26 @@ const Editor = ({
     // publish and unpublish of pipe
     editor?.setOptions({ editable })
   }, [editable, editor])
+
+  useEffect(() => {
+    // this is to sync the content of the editor with the defaultValue
+    // only do this if the defaultValue has actually changed
+    // for simplicity, we don't check if the initialValue has changed
+    // and just override the content of the editor with the defaultValue
+    const hasDefaultValueChanged =
+      defaultValue !== previousDefaultValueRef.current
+
+    if (editor && defaultValue !== undefined && hasDefaultValueChanged) {
+      editor?.commands.setContent(defaultValue as string)
+      onChange(
+        isRich
+          ? removeProblematicWhitespace(editor.getHTML())
+          : removeProblematicWhitespace(editor.getText()),
+      )
+
+      previousDefaultValueRef.current = defaultValue
+    }
+  }, [defaultValue, editor, isRich, varInfo, onChange, initialValue])
 
   const handleVariableClick = useCallback(
     (variable: Variable) => {
@@ -338,7 +364,7 @@ const Editor = ({
 
 interface RichTextEditorProps {
   required?: boolean
-  defaultValue?: string
+  defaultValue?: string | IJSONValue
   name: string
   label?: string
   description?: string
@@ -409,6 +435,7 @@ const RichTextEditor = ({
           <Editor
             onChange={onChange}
             initialValue={value}
+            defaultValue={defaultValue}
             editable={!readOnly}
             placeholder={placeholder}
             variablesEnabled={variablesEnabled}
