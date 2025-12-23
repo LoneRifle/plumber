@@ -11,6 +11,7 @@ import { type CheckboxVariable } from '@/components/AttachmentSuggestions/compon
 import {
   AttachmentConfigInput,
   createUpdateStep,
+  MAX_NUM_FILES,
   reformatToAttachmentConfig,
 } from '@/components/AttachmentSuggestions/utils'
 import { DELETE_UPLOADED_FILE } from '@/graphql/mutations/delete-uploaded-file'
@@ -149,10 +150,20 @@ export const useS3Operations = (
         )
 
         const currentAttachments = getValues(name) || []
-        const mutationInput = createUpdateStep(getValues(), [
-          ...currentAttachments,
-          s3Id,
-        ])
+        /**
+         * we update the attachments in the step parameters based on the maxNumFiles
+         * if maxNumFiles is 1, we replace the existing attachments with the new one
+         * if the number of attachments is equal to maxNumFiles, we keep the existing selection
+         * else, we add the new attachment to the existing attachments
+         */
+        const updatedAttachments = []
+        if (currentAttachments.length >= MAX_NUM_FILES) {
+          updatedAttachments.push(...currentAttachments)
+        } else {
+          updatedAttachments.push(...currentAttachments, s3Id)
+        }
+
+        const mutationInput = createUpdateStep(getValues(), updatedAttachments)
 
         await updateStep({
           variables: { input: mutationInput },
